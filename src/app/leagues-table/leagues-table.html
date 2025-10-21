@@ -1,0 +1,50 @@
+<mat-form-field>
+  <mat-label>Filter</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+  <mat-label>Select</mat-label>
+  <mat-select (valueChange)="applySportsFilter($event)">
+    @for (sportType of leaguesService.sports(); track $index) {
+      <mat-option [value]="sportType">{{sportType}}</mat-option>
+      }
+  </mat-select>
+</mat-form-field>
+
+<table mat-table
+       [dataSource]="dataSource" multiTemplateDataRows
+       class="mat-elevation-z8">
+  @for (column of columnsToDisplay; track column) {
+    <ng-container matColumnDef="{{column}}">
+      <th mat-header-cell *matHeaderCellDef>{{column}}</th>
+      <td mat-cell *matCellDef="let element">{{element[column]}}</td>
+    </ng-container>
+  }
+  <ng-container matColumnDef="expand">
+    <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+    <td mat-cell *matCellDef="let element">
+      <button
+        matIconButton
+        aria-label="expand row"
+        (click)="toggle(element); $event.stopPropagation()"
+        class="toggle-button"
+        [class.toggle-button-expanded]="isExpanded(element)">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+   <ng-container matColumnDef="expandedDetail">
+    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length" class="badge-list">
+      @for (badge of getBadge(element.idLeague) | async; track badge.strBadge) {
+        <app-league-badge [badgeInfo]="badge"/>
+      }
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+  <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;"
+      class="element-row"
+      [class.expanded-row]="isExpanded(element)"
+      (click)="toggle(element)">
+  </tr>
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+</table>

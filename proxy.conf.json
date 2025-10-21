@@ -1,0 +1,11 @@
+{
+  "/api": {
+    "target": "https://www.thesportsdb.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": "/api/v1/json/3"
+    }
+  }
+}
